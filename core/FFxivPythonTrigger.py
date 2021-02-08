@@ -6,6 +6,7 @@ from .utils.Logger import log
 import asyncio
 import atexit
 import inspect
+import traceback
 from functools import partial
 
 from .utils.normalToAsync import normal_to_async
@@ -22,7 +23,13 @@ class FFxivPythonTrigger(object):
         self.plugin_tasks = list()
         self.events = dict()
         atexit.register(self.close)
-        self.register_plugins(plugins if plugins is not None else [])
+        try:
+            self.register_plugins(plugins if plugins is not None else [])
+        except:
+            log('error occurred during initialization')
+            log(traceback.format_exc())
+            self.close()
+            raise Exception('error occurred during initialization')
 
     def register_plugins(self, plugins):
         for plugin in plugins:
