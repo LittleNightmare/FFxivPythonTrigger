@@ -13,3 +13,6 @@ class Magics(object):
 
     def get_sheet_row(self, sheet, rowId: int):
         return self.gm.GetSheetRow(sheet, rowId)
+
+    def use_item(self, item_id, is_hq=False, target=0xE0000000):
+        self.gm.UseItem(item_id, is_hq, target)
