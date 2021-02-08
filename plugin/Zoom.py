@@ -1,14 +1,14 @@
 from core.FFxivPythonTrigger import PluginBase
 
-offset = 0x1cb9024
-default = 10.4
-command='@sjump'
+pattern=b"\x48\x8D\x1D....\x48\x8B\xCB\x41\x8D\x50\x02"
+default = 20
+command='@zoom'
 
-class SuperJump(PluginBase):
-    name = "Super Jump"
+class ZoomPlugin(PluginBase):
+    name = "zoom plugin"
 
     def plugin_onload(self):
-        self.addr = self.FPT.api.MemoryHandler.process_base.lpBaseOfDll + offset
+        self.addr = self.FPT.api.MemoryHandler.read_ulonglong(self.FPT.api.MemoryHandler.scan_pointer_by_pattern(pattern,7))+284
         self.FPT.api.command.register(command, self.process_command)
         #self.FPT.register_event("log_event", self.process_command)
 
@@ -28,7 +28,6 @@ class SuperJump(PluginBase):
             elif arg[0] == "get":
                 return self.FPT.api.MemoryHandler.read_float(self.addr)
             else:
-                return "unknown arg [%s]"%arg[0]
+                return "unknown arg [%s]" % arg[0]
         except Exception as e:
             return str(e)
-

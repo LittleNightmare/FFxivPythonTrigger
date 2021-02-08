@@ -4,11 +4,13 @@ from plugin.GayMagician.GayMagicianPlugin import GayMagicianPlugin
 from plugin.CutsceneSkipper import CutsceneSkipper
 from plugin.SuperJump import SuperJump
 from plugin.Command import Command
+from plugin.Zoom import ZoomPlugin
 
-fpt=FFxivPythonTrigger([
+fpt = FFxivPythonTrigger([
     FFxivMemory,
     GayMagicianPlugin,
+    Command,
     CutsceneSkipper,
     SuperJump,
-    Command,
+    ZoomPlugin,
 ]).start()

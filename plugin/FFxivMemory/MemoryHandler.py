@@ -29,7 +29,7 @@ class MemoryHandler(pymem.Pymem):
         """
         return pymem.pattern.pattern_scan_module(self.process_handle, self.main_module, pattern)
 
-    def scan_pointer_by_pattern(self, pattern: bytes, cmd_len: int,ptr_idx:int=None):
+    def scan_pointer_by_pattern(self, pattern: bytes, cmd_len: int, ptr_idx: int = None):
         """
         scan memory after a byte pattern for the main module and get the upper pointer
 
@@ -43,11 +43,10 @@ class MemoryHandler(pymem.Pymem):
         return self.read_ulong(temp + ptr_idx) + temp + cmd_len
 
     def read_pointer_shift(self, base, *shifts):
-        ptr=base
+        ptr = base
         for shift in shifts:
-            ptr=self.read_ulonglong(ptr)+shift
+            ptr = self.read_ulonglong(ptr) + shift
         return ptr
-
 
     def scan_vTable(self, signature: int):
         next_page = 0
