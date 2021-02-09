@@ -21,7 +21,7 @@ class SuperJump(PluginBase):
     def _process_command(self, arg):
         try:
             if arg[0] == "set":
-                if arg[1] == default:
+                if arg[1] == 'default':
                     arg[1] = default
                 self.FPT.api.MemoryHandler.write_float(self.addr, float(arg[1]))
                 return "set to %s" % arg[1]
