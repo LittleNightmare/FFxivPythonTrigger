@@ -23,10 +23,10 @@ class ChatLogMemory(object):
             self.base_addr = self.handler.scan_vTable(addr)
         except Exception:
             raise Exception("cannot scan chat log vTable")
-        self.check_update_ptr = self.base_addr + (5 * 8)
-        self.lengths_ptr = self.base_addr + (9 * 8)
         self.count_ptr = self.base_addr + (5 * 4)
         self.page_ptr = self.base_addr + (6 * 4)
+        self.check_update_ptr = self.base_addr + (5 * 8)
+        self.lengths_ptr = self.base_addr + (9 * 8)
         self.least_length_ptr = self.base_addr + (10 * 8)
         self.data_ptr = self.base_addr + (12 * 8)
 

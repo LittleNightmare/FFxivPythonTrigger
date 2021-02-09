@@ -42,6 +42,16 @@ class MemoryHandler(pymem.Pymem):
         if temp is None: return None
         return self.read_ulong(temp + ptr_idx) + temp + cmd_len
 
+    def read_byte(self, addr: int):
+        return self.read_bytes(addr, 1)[0]
+
+    def write_byte(self, address, value):
+        return self.write_bytes(address,bytes([value]),1)
+
+    def write_string(self,address,value):
+        super(MemoryHandler, self).write_string(address,value)
+        self.write_byte(address+len(value.encode()),0)
+
     def read_pointer_shift(self, base, *shifts):
         ptr = base
         for shift in shifts:
