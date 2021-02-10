@@ -24,6 +24,8 @@ class FFxivMemory(PluginBase):
         self.FPT.register_api('MemoryHandler', self.handler)
         self.FPT.register_api('FFxivMemory', TmpClass())
 
+
+
     def plugin_onunload(self):
         self.work = False
 
