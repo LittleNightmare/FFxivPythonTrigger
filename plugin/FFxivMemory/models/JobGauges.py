@@ -7,3 +7,8 @@ RedMageGauge= get_memory_class({
 WarriorGauge= get_memory_class({
     'beast': ('byte', 0)
 })
+GunbreakerGauge=get_memory_class({
+    'cartridges':('byte', 0),
+    'continuationMilliseconds':('ushort',2),
+    'continuationState': ('byte', 4)
+})

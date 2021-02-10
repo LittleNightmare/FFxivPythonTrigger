@@ -12,6 +12,10 @@ keys = {
         'single': (1, 1),
         'multi': (1, 2),
         'combo': (1, 3),
+    },
+    'war': {
+        'single': (1, 1),
+        'multi': (1, 2),
     }
 }
 
@@ -27,6 +31,7 @@ class AutoCombo(PluginBase):
         self.comboState = ComboState(self.FPT.api.MemoryHandler, combo_addr)
         self.FPT.register_api('ComboState', self.comboState)
         self.work = False
+        self.keyTemp = {i: {j: None for j in range(12)} for i in range(10)}
 
     def plugin_onunload(self):
         self.work = False
@@ -38,7 +43,9 @@ class AutoCombo(PluginBase):
                 name = case[1]
             else:
                 break
-        self.FPT.api.Magic.macro_command("/hotbar set %s %s %s" % (name, row, block))
+        if self.keyTemp and self.keyTemp[row][block] != name:
+            self.keyTemp[row][block] = name
+            self.FPT.api.Magic.macro_command("/hotbar set %s %s %s" % (name, row, block))
 
     async def plugin_start(self):
         self.work = True
@@ -50,7 +57,7 @@ class AutoCombo(PluginBase):
 
     def RedMageLogic(self):
         meActor = self.get_me()
-        effects = [effect.buffId for effect in meActor.effects if effect.buffId != 0]
+        effects = {effect.buffId: effect for effect in meActor.effects if effect.buffId != 0}
         speedSpell = 1249 in effects or 167 in effects
         gauge = self.FPT.api.FFxivMemory.playerInfo.get_gauge()
         white = gauge.white_mana <= gauge.black_mana
@@ -86,6 +93,25 @@ class AutoCombo(PluginBase):
         else:
             self.change_skill(*keys['rdm']['combo'], '回刺')
 
+    def WarriorLogic(self):
+        meActor = self.get_me()
+        effects = {effect.buffId: effect for effect in meActor.effects if effect.buffId != 0}
+        combo_id = self.comboState.actionId
+        if combo_id == 31:
+            self.change_skill(*keys['war']['single'], '凶残裂', (4, '重劈'))
+        elif combo_id == 37:
+            if 90 in effects and effects[90].timer > 5:
+                self.change_skill(*keys['war']['single'], '暴风斩', (26, '重劈'))
+            else:
+                self.change_skill(*keys['war']['single'], '暴风碎', (50, '暴风斩'), (26, '重劈'))
+        else:
+            self.change_skill(*keys['war']['single'], '重劈')
+        if combo_id==41:
+            self.change_skill(*keys['war']['multi'], '秘银暴风', (40, '超压斧'))
+        else:
+            self.change_skill(*keys['war']['multi'], '超压斧')
+
     combos = {
-        35: 'RedMageLogic'
+        35: 'RedMageLogic',
+        21: 'WarriorLogic',
     }
