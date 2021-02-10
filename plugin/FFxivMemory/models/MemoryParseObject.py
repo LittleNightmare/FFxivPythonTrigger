@@ -1,9 +1,12 @@
 from plugin.FFxivMemory.MemoryHandler import MemoryHandler
 from time import time
+
 auto_update_sec = 0.5
+
 
 class Base(object):
     vals = dict()
+    auto_update_sec = auto_update_sec
 
     def __init__(self, handler: MemoryHandler, base: int):
         self.handler = handler
@@ -11,16 +14,16 @@ class Base(object):
         self.cache = dict()
         self.last_update = dict()
 
-    def need_update(self,key):
-        return self.last_update[key]+auto_update_sec>time()
+    def need_update(self, key):
+        return self.last_update[key] + self.auto_update_sec < time()
 
     def __getattr__(self, key):
         return self[key]
 
-    def __getitem__(self, key):
+    def __getitem__(self, key, force_update=False):
         if key not in self.vals:
             raise IndexError('%s is not a valid key' % key)
-        return self.refresh(key) if self.need_update(key) else self.cache[key]
+        return self.refresh(key) if force_update or self.need_update(key) else self.cache[key]
 
     def refresh(self, key):
         if type(self.vals[key][0]) == str:
@@ -64,16 +67,18 @@ class MemoryLazyObject(Base):
         return self.refresh(key) if key not in self.cache or self.need_update(key) else self.cache[key]
 
 
-def get_memory_class(vals_data: dict):
+def get_memory_class(vals_data: dict, refresh_time=auto_update_sec):
     class TempClass(MemoryObject):
         vals = vals_data
+        auto_update_sec = refresh_time
 
     return TempClass
 
 
-def get_memory_lazy_class(vals_data: dict):
+def get_memory_lazy_class(vals_data: dict, refresh_time=auto_update_sec):
     class TempClass(MemoryLazyObject):
         vals = vals_data
+        auto_update_sec = refresh_time
 
     return TempClass
 
@@ -122,7 +127,7 @@ class MemoryArray(object):
         temp = dict()
         for el in self:
             if el[key] not in temp:
-                temp[el[key]]=list()
+                temp[el[key]] = list()
             temp[el[key]].append(el)
         return temp
 

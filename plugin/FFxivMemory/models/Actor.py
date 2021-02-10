@@ -1,6 +1,6 @@
 from .MemoryParseObject import get_memory_lazy_class, get_memory_class,get_memory_array
-Effect=get_memory_class({
-    'buffId':('ushort',0),
+Effect= get_memory_class({
+    'buffId': ('ushort', 0),
     'param': ('ushort', 2),
     'timer': ('float', 4),
     'actorId': ('uint', 8),
