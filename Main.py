@@ -5,12 +5,25 @@ from plugin.CutsceneSkipper import CutsceneSkipper
 from plugin.SuperJump import SuperJump
 from plugin.Command import Command
 from plugin.Zoom import ZoomPlugin
+from plugin.NamazuServer import NamazuServer
 
-fpt = FFxivPythonTrigger([
-    FFxivMemory,
-    GayMagicianPlugin,
-    Command,
-    CutsceneSkipper,
-    SuperJump,
-    ZoomPlugin,
-]).start()
+
+def show(evt):
+    if evt.channel_id == 2091:
+        print(evt)
+
+
+try:
+    fpt = FFxivPythonTrigger([
+        FFxivMemory,
+        GayMagicianPlugin,
+        NamazuServer,
+        Command,
+        CutsceneSkipper,
+        SuperJump,
+        ZoomPlugin,
+    ])
+    fpt.register_event("log_event", show)
+    fpt.start()
+except Exception as e:
+    print(e)
