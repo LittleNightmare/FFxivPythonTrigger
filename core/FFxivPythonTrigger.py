@@ -33,9 +33,9 @@ class FFxivPythonTrigger(object):
 
     def register_plugins(self, plugins):
         for plugin in plugins:
-            log("start register plugin: %s" % plugin.name)
+            log("register plugin [start]: %s" % plugin.name)
             self.register_plugin(plugin)
-            log("register plugin success: %s" % plugin.name)
+            log("register plugin [success]: %s" % plugin.name)
 
     def register_plugin(self, plugin):
         temp_plugin = PluginContainer(self, plugin)
@@ -51,10 +51,15 @@ class FFxivPythonTrigger(object):
 
     def unregister_event(self, event_id, callback):
         self.events[event_id].remove(callback)
+        if not self.events[event_id]:
+            del self.events[event_id]
 
     def unload_plugin(self, plugin_name):
+        log("unregister plugin [start]: %s" % plugin_name)
         self.plugins[plugin_name].plugin_unload()
         del self.plugins[plugin_name]
+        log("unregister plugin [success]: %s" % plugin_name)
+
 
     def append_plugin_task(self, task):
         self.plugin_tasks.append(task)
