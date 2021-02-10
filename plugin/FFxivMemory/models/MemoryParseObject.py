@@ -87,22 +87,28 @@ class MemoryArray(object):
     Length = 0
     ValType = None
     ValLen = 0
+    auto_update_sec = auto_update_sec
 
     def __init__(self, handler: MemoryHandler, base: int):
         self.handler = handler
         self.base = base
         self.cache = [None for i in range(self.Length)]
+        self.last_update = [-1 for i in range(self.Length)]
         for i in range(self.Length): self.refresh(i)
+
+    def need_update(self, key):
+        return self.last_update[key] + self.auto_update_sec < time()
 
     def refresh(self, key: int):
         if type(self.ValType) == str:
             self.cache[key] = getattr(self.handler, 'read_' + self.ValType)(self.base + (self.ValLen * key))
         else:
             self.cache[key] = self.ValType(self.handler, self.base + (self.ValLen * key))
+        self.last_update[key] = time()
         return self.cache[key]
 
-    def __getitem__(self, key):
-        return self.cache[key]
+    def __getitem__(self, key:int, force_update=False):
+        return self.refresh(key) if force_update or self.need_update(key) else self.cache[key]
 
     def __setitem__(self, key, value):
         if type(self.ValType) == str:
@@ -132,10 +138,50 @@ class MemoryArray(object):
         return temp
 
 
-def get_memory_array(val_type, val_len, count):
+class Pointer(object):
+    auto_update_sec = auto_update_sec
+    ValType = None
+
+    def __init__(self, handler: MemoryHandler, base: int):
+        self.handler = handler
+        self.base = base
+        self._value = None
+        self.last_update = -1
+
+    def need_update(self):
+        return self.last_update + self.auto_update_sec < time()
+
+    def refresh(self):
+        addr = self.handler.read_ulonglong(self._value)
+        if type(self.ValType) == str:
+            self._value = getattr(self.handler, 'read_' + self.ValType)(addr)
+        else:
+            self._value = self.ValType(self.handler, addr)
+        self.last_update = time()
+        return self._value
+
+    def get_value(self,force_update=False):
+        return self.refresh() if force_update or self.need_update() else self._value
+
+    def replace(self, value):
+        addr = self.handler.read_ulonglong(self._value)
+        if type(self.ValType) == str:
+            self._value = getattr(self.handler, 'write_' + self.ValType)(addr, value)
+        else:
+            self._value = self.get_value().replace(value)
+
+
+def get_memory_array(val_type, val_len, count,update_time=0.5):
     class TempClass(MemoryArray):
+        auto_update_sec=update_time
         ValType = val_type
         ValLen = val_len
         Length = count
 
+    return TempClass
+
+def get_pointer(val_type,update_time=0.5):
+    class TempClass(Pointer):
+        ValType=val_type
+        auto_update_sec = update_time
     return TempClass

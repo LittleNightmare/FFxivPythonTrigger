@@ -1,6 +1,7 @@
 from core.FFxivPythonTrigger import PluginBase
 from plugin.FFxivMemory.models.MemoryParseObject import get_memory_lazy_class
 from asyncio import sleep
+import traceback
 
 prev_combo_pattern = b"\xF3\x0F......\xF3\x0F...\xE8....\x48\x8B.\x48\x8B.\x0F\xB7"
 ComboState = get_memory_lazy_class({
@@ -16,6 +17,9 @@ keys = {
     'war': {
         'single': (1, 1),
         'multi': (1, 2),
+    },
+    'dk':{
+        'single':(1,1),
     }
 }
 
@@ -52,11 +56,15 @@ class AutoCombo(PluginBase):
         playerInfo = self.FPT.api.FFxivMemory.playerInfo
         while self.work:
             if playerInfo.job in self.combos:
-                getattr(self, self.combos[playerInfo.job])()
+                try:
+                    self.combos[playerInfo.job](self)
+                except:
+                    traceback.print_exc()
             await sleep(0.1)
 
     def RedMageLogic(self):
         meActor = self.get_me()
+        if meActor is None: return
         effects = {effect.buffId: effect for effect in meActor.effects if effect.buffId != 0}
         speedSpell = 1249 in effects or 167 in effects
         gauge = self.FPT.api.FFxivMemory.playerInfo.get_gauge()
@@ -95,6 +103,7 @@ class AutoCombo(PluginBase):
 
     def WarriorLogic(self):
         meActor = self.get_me()
+        if meActor is None:return
         effects = {effect.buffId: effect for effect in meActor.effects if effect.buffId != 0}
         combo_id = self.comboState.actionId
         if combo_id == 31:
@@ -111,7 +120,17 @@ class AutoCombo(PluginBase):
         else:
             self.change_skill(*keys['war']['multi'], '超压斧')
 
-    combos = {
-        35: 'RedMageLogic',
-        21: 'WarriorLogic',
+    def DarkKnightLogic(self):
+        combo_id = self.comboState.actionId
+        if combo_id==3617:
+            self.change_skill(*keys['dk']['single'], '吸收斩', (2, '重斩'))
+        elif combo_id == 3623:
+            self.change_skill(*keys['dk']['single'], '噬魂斩', (26, '重斩'))
+        else:
+            self.change_skill(*keys['dk']['single'], '重斩')
+
+    combos={
+        21:WarriorLogic,
+        35:RedMageLogic,
+        32:DarkKnightLogic,
     }

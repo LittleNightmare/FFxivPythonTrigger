@@ -18,6 +18,8 @@ class Command(PluginBase):
     def FptManager(self, args):
         if args[0] == 'close':
             self.FPT._fpt.close()
+        elif args[0] == 'raise':
+            raise Exception("111aw")
 
     def deal_chat_log(self, event):
         if event.channel_id == 56:

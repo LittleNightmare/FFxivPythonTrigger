@@ -1,5 +1,6 @@
 from .MemoryHandler import MemoryHandler
 from .models.Actor import Actor
+from .models.MemoryParseObject import get_memory_array,get_pointer
 from time import time
 
 pattern = b"\x48\x8D.....\xE8....\x48\x8B.\x48\x8B.\x48\x8D.....\xE8....\x48\x8D.....\xBA....\xE8....\x89\x2F"
@@ -52,7 +53,9 @@ class ActorTable(object):
             if key > 1000:
                 return self.id_dict[key][0] if key in self.id_dict else None
             else:
-                return self.cache[key]
+                return self.cache[key] if key < len(self) else None
         else:
             return self.name_dict[key] if key in self.name_dict else None
-    def __len__(self): return len(self.cache)
+
+    def __len__(self):
+        return len(self.cache)
