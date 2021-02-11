@@ -1,4 +1,4 @@
-from core.FFxivPythonTrigger import PluginBase
+from FFxivPythonTrigger import PluginBase
 
 pattern=b"\x48\x8D\x1D....\x48\x8B\xCB\x41\x8D\x50\x02"
 default = 20

@@ -1,9 +1,9 @@
-from core.FFxivPythonTrigger import PluginBase
+from FFxivPythonTrigger import PluginBase
 from aiohttp import web
 import asyncio
 
-host = "127.0.0.1"
-port = 2019
+default_host = "127.0.0.1"
+default_port = 2019
 loop = asyncio.get_event_loop()
 
 
@@ -18,14 +18,16 @@ class NamazuServer(PluginBase):
         return web.Response(body="success".encode('utf-8'))
 
     def plugin_onload(self):
+        self.server_config = self.FPT.storage.data.setdefault('server', dict())
         self.app = web.Application(loop=loop)
         self.app.add_routes([web.post('/command', self.command)])
-        runner = web.AppRunner(self.app)
-        loop.run_until_complete(runner.setup())
-        self.site = web.TCPSite(runner, host, port)
+        self.runner = web.AppRunner(self.app)
+        loop.run_until_complete(self.runner.setup())
 
     def plugin_onunload(self):
         asyncio.run(self.app.shutdown())
 
     async def plugin_start(self):
-        await self.site.start()
+        host = self.server_config.setdefault('host', default_host)
+        port = self.server_config.setdefault('port', default_port)
+        await web.TCPSite(self.runner, host, port).start()

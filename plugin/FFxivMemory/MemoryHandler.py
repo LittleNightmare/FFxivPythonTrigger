@@ -1,8 +1,17 @@
 import logging
 import pymem
+import struct
 from .ValToBytes import long_to_bytes
 
 pymem.logger.setLevel(logging.ERROR)
+
+
+def byte_to_sbyte(byte):
+    return struct.unpack('b', struct.pack('<i', byte)[:1])[0]
+
+
+def sbyte_to_byte(sbyte):
+    return struct.unpack('B', struct.pack('<i', sbyte)[:1])[0]
 
 
 class MemoryHandler(pymem.Pymem):
@@ -46,11 +55,11 @@ class MemoryHandler(pymem.Pymem):
         return self.read_bytes(addr, 1)[0]
 
     def write_byte(self, address, value):
-        return self.write_bytes(address,bytes([value]),1)
+        return self.write_bytes(address, bytes([value]), 1)
 
-    def write_string(self,address,value):
-        super(MemoryHandler, self).write_string(address,value)
-        self.write_byte(address+len(value.encode()),0)
+    def write_string(self, address, value):
+        super(MemoryHandler, self).write_string(address, value)
+        self.write_byte(address + len(value.encode()), 0)
 
     def read_pointer_shift(self, base, *shifts):
         ptr = base
@@ -62,5 +71,12 @@ class MemoryHandler(pymem.Pymem):
         next_page = 0
         ans = None
         while ans is None:
-            next_page, ans = pymem.pattern.scan_pattern_page(self.process_handle, next_page, long_to_bytes(signature, True))
+            next_page, ans = pymem.pattern.scan_pattern_page(self.process_handle, next_page,
+                                                             long_to_bytes(signature, True))
         return ans
+
+    def read_sbyte(self, address: int):
+        return byte_to_sbyte(self.read_byte(address))
+
+    def write_sbyte(self, address: int, value: int):
+        return self.write_byte(address, sbyte_to_byte(value))

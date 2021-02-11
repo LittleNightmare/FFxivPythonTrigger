@@ -1,5 +1,5 @@
 from .ChatLogMemory import ChatLogMemory
-from core.FFxivPythonTrigger import EventBase
+from FFxivPythonTrigger import EventBase
 from datetime import datetime
 
 

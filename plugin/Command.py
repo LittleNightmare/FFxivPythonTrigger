@@ -1,4 +1,4 @@
-from core.FFxivPythonTrigger import PluginBase
+from FFxivPythonTrigger import PluginBase
 
 
 class CommandManager(dict):

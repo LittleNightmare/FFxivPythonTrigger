@@ -1,4 +1,4 @@
-from core.FFxivPythonTrigger import PluginBase
+from FFxivPythonTrigger import PluginBase
 
 offset = 0x1cb9024
 default = 10.4

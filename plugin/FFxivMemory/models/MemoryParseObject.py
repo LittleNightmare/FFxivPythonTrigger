@@ -52,6 +52,12 @@ class Base(object):
         for key in self.vals:
             self[key] = value[key]
 
+    def __dict__(self):
+        return {k: self[k] for k in self.vals.keys()}
+
+    def __str__(self):
+        return str(dict(self))
+
 
 class MemoryObject(Base):
     def __init__(self, handler: MemoryHandler, base: int):
@@ -107,7 +113,7 @@ class MemoryArray(object):
         self.last_update[key] = time()
         return self.cache[key]
 
-    def __getitem__(self, key:int, force_update=False):
+    def __getitem__(self, key: int, force_update=False):
         return self.refresh(key) if force_update or self.need_update(key) else self.cache[key]
 
     def __setitem__(self, key, value):
@@ -137,6 +143,12 @@ class MemoryArray(object):
             temp[el[key]].append(el)
         return temp
 
+    def __list__(self):
+        return [self[i] for i in range(self.Length)]
+
+    def __str__(self):
+        return str(list(self))
+
 
 class Pointer(object):
     auto_update_sec = auto_update_sec
@@ -160,7 +172,7 @@ class Pointer(object):
         self.last_update = time()
         return self._value
 
-    def get_value(self,force_update=False):
+    def get_value(self, force_update=False):
         return self.refresh() if force_update or self.need_update() else self._value
 
     def replace(self, value):
@@ -171,17 +183,19 @@ class Pointer(object):
             self._value = self.get_value().replace(value)
 
 
-def get_memory_array(val_type, val_len, count,update_time=0.5):
+def get_memory_array(val_type, val_len, count, update_time=0.5):
     class TempClass(MemoryArray):
-        auto_update_sec=update_time
+        auto_update_sec = update_time
         ValType = val_type
         ValLen = val_len
         Length = count
 
     return TempClass
 
-def get_pointer(val_type,update_time=0.5):
+
+def get_pointer(val_type, update_time=0.5):
     class TempClass(Pointer):
-        ValType=val_type
+        ValType = val_type
         auto_update_sec = update_time
+
     return TempClass

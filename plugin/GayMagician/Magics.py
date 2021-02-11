@@ -1,6 +1,21 @@
+from os import path
+import clr
+clr.AddReference(path.join(path.dirname(path.realpath(__file__)),'res', 'GayMagician'))
+from GayMagician import GayMagician
+
 class Magics(object):
-    def __init__(self, gm):
-        self.gm = gm
+    def __init__(self, *argv):
+        self.gm = GayMagician()
+        self.load_game_process(*argv)
+
+    def load_game_process(self,*argv):
+        self.gm.LoadGameProcess(*argv)
+
+    def detach(self):
+        self.gm.Detach()
+
+    def attach(self):
+        self.gm.Attach()
 
     def macro_command(self, command: str):
         self.gm.DoTextCommand(command)

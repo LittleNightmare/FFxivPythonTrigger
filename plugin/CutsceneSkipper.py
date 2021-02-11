@@ -1,4 +1,4 @@
-from core.FFxivPythonTrigger import PluginBase
+from FFxivPythonTrigger import PluginBase
 
 nop = b"\x90\x90"
 pattern = b"\x8B\xD7\x48\x8B\x08\x4C\x8B\x01"
