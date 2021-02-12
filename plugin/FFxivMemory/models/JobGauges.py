@@ -1,6 +1,11 @@
 from .MemoryParseObject import get_memory_class, get_memory_array
 from enum import Enum
 
+
+def byte_get_bit(byte: int, start: int, length: int):
+    return (1 << length) - 1 & byte >> start
+
+
 RedMageGauge = get_memory_class({
     'white_mana': ('byte', 0),
     'black_mana': ('byte', 1),
@@ -84,11 +89,11 @@ class BlackMageJobMemory(get_memory_class({
 })):
     @property
     def enochain_active(self):
-        return self.enochain_state & 1 != 0
+        return byte_get_bit(self.enochain_state, 0, 1)
 
     @property
     def polygot_active(self):
-        return self.enochain_state & 1 << 1 != 0
+        return byte_get_bit(self.enochain_state, 1, 1)
 
 
 WhiteMageGauge = get_memory_class({
@@ -98,12 +103,86 @@ WhiteMageGauge = get_memory_class({
 })
 
 ArcanistGauge = get_memory_class({
-    'aetherflowStacks':('byte', 4),
+    'aetherflowStacks': ('byte', 4),
 })
 
+
 class SummonerGauge(get_memory_class({
-    'stanceMilliseconds':('ushort',0),
-    'bahamutStance':('byte',2),
-    'bahamutSummoned':('byte',3),
-    'stacks':('byte',3),
-})):pass
+    'stanceMilliseconds': ('ushort', 0),
+    'bahamutStance': ('byte', 2),
+    'bahamutSummoned': ('byte', 3),
+    'stacks': ('byte', 3),
+})):
+    @property
+    def aetherflowStacks(self):
+        return byte_get_bit(self.stacks, 0, 2)
+
+    @property
+    def dreadwyrmStacks(self):
+        return byte_get_bit(self.stacks, 2, 2)
+
+    @property
+    def phoenixReady(self):
+        return byte_get_bit(self.stacks, 4, 1)
+
+
+ScholarGauge = get_memory_class({
+    'aetherflowStacks': ('byte', 2),
+    'fairyGauge': ('byte', 3),
+    'fairyMilliseconds': ('ushort', 4),  # Seraph time left ms.
+    'fairyStatus': ('byte', 6)
+    # Varies depending on which fairy was summoned, during Seraph/Dissipation: 6 - Eos, 7 - Selene, else 0.
+})
+
+PuglistGauge = get_memory_class({
+    'lightningMilliseconds': ('ushort', 0),
+    'lightningStacks': ('byte', 2),
+})
+MonkGauge = get_memory_class({
+    'lightningMilliseconds': ('ushort', 0),
+    'lightningStacks': ('byte', 2),
+    'chakraStacks': ('byte', 3),
+})
+MachinistGauge = get_memory_class({
+    'overheatMilliseconds': ('ushort', 0),
+    'batteryMilliseconds': ('ushort', 2),
+    'heat': ('byte', 4),
+    'battery': ('byte', 5)
+})
+
+
+class AstrologianGauge(get_memory_class({
+    'heldCard': ('byte', 4),
+    'arcanums': (get_memory_array('byte', 1, 3), 5),
+})):
+    class Card(Enum):
+        none = 0
+        balance = 1
+        bole = 2
+        arrow = 3
+        spear = 4
+        ewer = 5
+        spire = 6
+
+    class Arcanum(Enum):
+        none = 0
+        solar = 1
+        lunar = 2
+        celestial = 3
+
+
+class Samurai(get_memory_class({
+    'kenki': ('byte', 4),
+    'sen_bits': ('byte', 5)
+})):
+    @property
+    def snow(self):
+        return (self.sen_bits & 1) != 0
+
+    @property
+    def moon(self):
+        return (self.sen_bits & 2) != 0
+
+    @property
+    def flower(self):
+        return (self.sen_bits & 4) != 0
