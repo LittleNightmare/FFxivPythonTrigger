@@ -50,5 +50,5 @@ class Player(_Player):
     gauge_addr = None
 
     def get_gauge(self):
-        if self.gauge_addr in gauges:
-            return gauges[self.gauge_addr](self.handler, self.gauge_addr)
+        if self.job in gauges:
+            return gauges[self.job](self.handler, self.gauge_addr)

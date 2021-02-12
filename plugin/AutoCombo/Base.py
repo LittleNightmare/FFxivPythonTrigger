@@ -2,15 +2,17 @@ from FFxivPythonTrigger import PluginBase
 from plugin.FFxivMemory.models.MemoryParseObject import get_memory_lazy_class
 from asyncio import sleep
 import traceback
+import logging
 
 prev_combo_pattern = b"\xF3\x0F......\xF3\x0F...\xE8....\x48\x8B.\x48\x8B.\x0F\xB7"
 ComboState = get_memory_lazy_class({
     'duration': ('float', 0),
     'actionId': ('uint', 4),
-}, 0)
+}, 0.01)
 
 
 class AutoComboBase(PluginBase):
+    log_combo_action_id = False
 
     def get_me(self):
         return self.FPT.api.FFxivMemory.actorTable[0]
@@ -21,6 +23,7 @@ class AutoComboBase(PluginBase):
         self.FPT.register_api('ComboState', self.comboState)
         self.work = False
         self.keyTemp = {i: {j: None for j in range(12)} for i in range(10)}
+        self.prev_combo_action_id = None
 
     def plugin_onunload(self):
         self.work = False
@@ -40,6 +43,9 @@ class AutoComboBase(PluginBase):
         self.work = True
         player_info = self.FPT.api.FFxivMemory.playerInfo
         while self.work:
+            if self.log_combo_action_id and self.comboState.actionId != self.prev_combo_action_id:
+                self.prev_combo_action_id = self.comboState.actionId
+                self.FPT.log('new combo action %s' % self.prev_combo_action_id, logging.DEBUG)
             if player_info.job in self.combos:
                 try:
                     self.combos[player_info.job](self)

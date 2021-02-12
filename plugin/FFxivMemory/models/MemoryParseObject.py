@@ -52,11 +52,11 @@ class Base(object):
         for key in self.vals:
             self[key] = value[key]
 
-    def __dict__(self):
+    def get_dict(self):
         return {k: self[k] for k in self.vals.keys()}
 
     def __str__(self):
-        return str(dict(self))
+        return str(self.get_dict())
 
 
 class MemoryObject(Base):
@@ -67,10 +67,10 @@ class MemoryObject(Base):
 
 
 class MemoryLazyObject(Base):
-    def __getitem__(self, key):
+    def __getitem__(self, key,force_update=False):
         if key not in self.vals:
             raise IndexError('%s is not a valid key' % key)
-        return self.refresh(key) if key not in self.cache or self.need_update(key) else self.cache[key]
+        return self.refresh(key) if key not in self.cache or self.need_update(key) or force_update else self.cache[key]
 
 
 def get_memory_class(vals_data: dict, refresh_time=auto_update_sec):
@@ -143,11 +143,11 @@ class MemoryArray(object):
             temp[el[key]].append(el)
         return temp
 
-    def __list__(self):
+    def get_list(self):
         return [self[i] for i in range(self.Length)]
 
     def __str__(self):
-        return str(list(self))
+        return str(self.get_list())
 
     def __contains__(self, item):
         for el in self:

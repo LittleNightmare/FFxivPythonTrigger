@@ -7,6 +7,7 @@ from plugin.Command import Command
 from plugin.Zoom import ZoomPlugin
 from plugin.NamazuServer import NamazuServer
 from plugin.AutoCombo import AutoCombo
+import logging
 
 
 def show(evt):
@@ -24,5 +25,6 @@ fpt = FFxivPythonTrigger([
     ZoomPlugin,
     AutoCombo,
 ])
+# fpt.logger.print_level=logging.DEBUG
 # fpt.register_event("log_event", show)
 fpt.start()

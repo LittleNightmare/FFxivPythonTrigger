@@ -13,7 +13,11 @@ class Warrior(AutoComboBase):
         if meActor is None: return
         effects = {effect.buffId: effect for effect in meActor.effects if effect.buffId != 0}
         combo_id = self.comboState.actionId
-        if combo_id == 31:
+        gauge = self.FPT.api.FFxivMemory.playerInfo.get_gauge()
+        use_strength = 1177 in effects or gauge.beast >= 50
+        if use_strength and meActor.level >= 35:
+            self.change_skill(*self.war_key['single'], '原初之魂')
+        elif combo_id == 31:
             self.change_skill(*self.war_key['single'], '凶残裂', (4, '重劈'))
         elif combo_id == 37:
             if 90 in effects and effects[90].timer > 5:
@@ -22,7 +26,10 @@ class Warrior(AutoComboBase):
                 self.change_skill(*self.war_key['single'], '暴风碎', (50, '暴风斩'), (26, '重劈'))
         else:
             self.change_skill(*self.war_key['single'], '重劈')
-        if combo_id == 41:
+
+        if use_strength and meActor.level >= 45:
+            self.change_skill(*self.war_key['multi'], '钢铁旋风')
+        elif combo_id == 41:
             self.change_skill(*self.war_key['multi'], '秘银暴风', (40, '超压斧'))
         else:
             self.change_skill(*self.war_key['multi'], '超压斧')
