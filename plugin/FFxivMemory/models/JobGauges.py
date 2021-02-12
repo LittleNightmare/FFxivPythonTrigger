@@ -79,7 +79,7 @@ ThaumaturgeGauge = get_memory_class({
 })
 
 
-class BlackMageJobMemory(get_memory_class({
+class BlackMageGauge(get_memory_class({
     'nextPolyglotMilliseconds': ('ushort', 0),
     'umbralMilliseconds': ('ushort', 2),
     'umbralStacks': ('sbyte', 4),
@@ -171,7 +171,7 @@ class AstrologianGauge(get_memory_class({
         celestial = 3
 
 
-class Samurai(get_memory_class({
+class SamuraiGauge(get_memory_class({
     'kenki': ('byte', 4),
     'sen_bits': ('byte', 5)
 })):
