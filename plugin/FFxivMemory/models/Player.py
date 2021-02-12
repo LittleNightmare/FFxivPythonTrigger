@@ -24,16 +24,31 @@ _Player = get_memory_lazy_class({
     'control': ('uint', 636),
 })
 
+gauges = {
+    19: PaladinGauge,  # 骑士,PLD
+    20: MonkGauge,  # 武僧,MNK
+    21: WarriorGauge,  # 战士,WAR
+    22: DragoonGauge,  # 龙骑士,DRG
+    23: BardGauge,  # 吟游诗人,BRD
+    24: WhiteMageGauge,  # 白魔法师,WHM
+    25: BlackMageGauge,  # 黑魔法师,BLM
+    26: ArcanistGauge,  # 秘术师,ACN
+    27: SummonerGauge,  # 召唤师,SMN
+    28: ScholarGauge,  # 学者,SCH
+    30: NinjaGauge,  # 忍者,NIN
+    31: MachinistGauge,  # 机工士,MCH
+    32: DarkKnightGauge,  # 暗黑骑士,DRK
+    33: AstrologianGauge,  # 占星术士,AST
+    34: SamuraiGauge,  # 武士,SAM
+    35: RedMageGauge,  # 赤魔法师,RDM
+    37: GunbreakerGauge,  # 绝枪战士,GNB
+    38: DancerGauge,  # 舞者,DNC
+}
+
 
 class Player(_Player):
     gauge_addr = None
 
     def get_gauge(self):
-        if self.gauge_addr is None:
-            return None
-        elif self.job == 35:
-            return RedMageGauge(self.handler, self.gauge_addr)
-        elif self.job == 21:
-            return WarriorGauge(self.handler, self.gauge_addr)
-        else:
-            return None
+        if self.gauge_addr in gauges:
+            return gauges[self.gauge_addr](self.handler, self.gauge_addr)

@@ -149,6 +149,12 @@ class MemoryArray(object):
     def __str__(self):
         return str(list(self))
 
+    def __contains__(self, item):
+        for el in self:
+            if item == el:
+                return True
+        return False
+
 
 class Pointer(object):
     auto_update_sec = auto_update_sec

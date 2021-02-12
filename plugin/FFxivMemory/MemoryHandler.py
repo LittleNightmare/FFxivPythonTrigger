@@ -18,7 +18,6 @@ class MemoryHandler(pymem.Pymem):
     def __init__(self, name: str = None, pid: int = None):
         if name and pid:
             raise Exception("Should not call by both name and pid")
-
         if name is not None:
             super().__init__(name)
         elif pid is not None:
