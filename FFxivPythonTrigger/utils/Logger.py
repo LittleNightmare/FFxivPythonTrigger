@@ -49,6 +49,7 @@ class Logger(object):
                 self.log('Logger', emsg, logging.ERROR)
 
     def log(self, name: str, msg: str, level: int = None):
+        # print(Log(name, msg, level))
         loop.create_task(self.async_log(name, msg, level))
 
 
