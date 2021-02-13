@@ -50,6 +50,9 @@ class MemoryHandler(pymem.Pymem):
         if temp is None: return None
         return self.read_ulong(temp + ptr_idx) + temp + cmd_len
 
+    def get_address_by_offset(self, offset: int):
+        return offset + self.process_base.lpBaseOfDll
+
     def read_byte(self, addr: int):
         return self.read_bytes(addr, 1)[0]
 

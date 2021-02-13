@@ -67,7 +67,7 @@ class MemoryObject(Base):
 
 
 class MemoryLazyObject(Base):
-    def __getitem__(self, key,force_update=False):
+    def __getitem__(self, key, force_update=False):
         if key not in self.vals:
             raise IndexError('%s is not a valid key' % key)
         return self.refresh(key) if key not in self.cache or self.need_update(key) or force_update else self.cache[key]
@@ -89,7 +89,7 @@ def get_memory_lazy_class(vals_data: dict, refresh_time=auto_update_sec):
     return TempClass
 
 
-class MemoryArray(object):
+class MemoryArrayLazy(object):
     Length = 0
     ValType = None
     ValLen = 0
@@ -98,12 +98,12 @@ class MemoryArray(object):
     def __init__(self, handler: MemoryHandler, base: int):
         self.handler = handler
         self.base = base
-        self.cache = [None for i in range(self.Length)]
-        self.last_update = [-1 for i in range(self.Length)]
+        self.cache = dict()
+        self.last_update = dict()
         for i in range(self.Length): self.refresh(i)
 
     def need_update(self, key):
-        return self.last_update[key] + self.auto_update_sec < time()
+        return key not in self.last_update or self.last_update[key] + self.auto_update_sec < time()
 
     def refresh(self, key: int):
         if type(self.ValType) == str:
@@ -156,6 +156,12 @@ class MemoryArray(object):
         return False
 
 
+class MemoryArray(MemoryArrayLazy):
+    def __init__(self, handler: MemoryHandler, base: int):
+        super(MemoryArray, self).__init__(handler, base)
+        for i in range(self.Length): self.refresh(i)
+
+
 class Pointer(object):
     auto_update_sec = auto_update_sec
     ValType = None
@@ -198,6 +204,15 @@ def get_memory_array(val_type, val_len, count, update_time=0.5):
 
     return TempClass
 
+
+def get_memory_lazy_array(val_type, val_len, count, update_time=0.5):
+    class TempClass(MemoryArrayLazy):
+        auto_update_sec = update_time
+        ValType = val_type
+        ValLen = val_len
+        Length = count
+
+    return TempClass
 
 def get_pointer(val_type, update_time=0.5):
     class TempClass(Pointer):

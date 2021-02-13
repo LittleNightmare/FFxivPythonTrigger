@@ -7,6 +7,7 @@ from plugin.Command import Command
 from plugin.Zoom import ZoomPlugin
 from plugin.NamazuServer import NamazuServer
 from plugin.AutoCombo import AutoCombo
+from plugin.AutoCombat import AutoCombat
 import logging
 
 
@@ -24,6 +25,7 @@ fpt = FFxivPythonTrigger([
     SuperJump,
     ZoomPlugin,
     AutoCombo,
+    AutoCombat
 ])
 # fpt.logger.print_level=logging.DEBUG
 # fpt.register_event("log_event", show)

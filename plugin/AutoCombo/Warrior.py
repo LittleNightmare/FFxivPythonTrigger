@@ -14,7 +14,7 @@ class Warrior(AutoComboBase):
         effects = {effect.buffId: effect for effect in meActor.effects if effect.buffId != 0}
         combo_id = self.comboState.actionId
         gauge = self.FPT.api.FFxivMemory.playerInfo.get_gauge()
-        use_strength = 1177 in effects or gauge.beast >= 50
+        use_strength = 1177 in effects or gauge.beast >= 70
         if use_strength and meActor.level >= 35:
             self.change_skill(*self.war_key['single'], '原初之魂')
         elif combo_id == 31:

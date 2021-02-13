@@ -1,5 +1,5 @@
 from FFxivPythonTrigger import PluginBase
-
+import traceback
 
 class CommandManager(dict):
     def register(self, command, callback):
@@ -25,7 +25,10 @@ class Command(PluginBase):
         if event.channel_id == 56:
             args = event.message.split(' ')
             if args[0] in self.commands:
-                self.commands[args[0]](args[1:])
+                try:
+                    self.commands[args[0]](args[1:])
+                except:
+                    self.FPT.log('exception occurred:\n{}'.format(traceback.format_exc()))
 
     def register(self, command: str, callback):
         if ' ' in command:
