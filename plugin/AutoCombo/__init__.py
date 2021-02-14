@@ -1,4 +1,4 @@
-from . import DarkKnight, RedMage, Warrior, Gunbreaker
+from . import DarkKnight, RedMage, Warrior, Gunbreaker, Machinist
 
 
 class AutoCombo(
@@ -6,6 +6,7 @@ class AutoCombo(
     RedMage.RedMage,
     Warrior.Warrior,
     Gunbreaker.Gunbreaker,
+    Machinist.Machinist
 ):
     name = "Auto Combo"
     combos = {
@@ -20,7 +21,7 @@ class AutoCombo(
         # 27: SummonerGauge,  # 召唤师,SMN
         # 28: ScholarGauge,  # 学者,SCH
         # 30: NinjaGauge,  # 忍者,NIN
-        # 31: MachinistGauge,  # 机工士,MCH
+        31: Machinist.Machinist.machinist_logic,  # 机工士,MCH
         32: DarkKnight.DarkKnight.dark_knight_logic,  # 暗黑骑士,DRK
         # 33: AstrologianGauge,  # 占星术士,AST
         # 34: SamuraiGauge,  # 武士,SAM

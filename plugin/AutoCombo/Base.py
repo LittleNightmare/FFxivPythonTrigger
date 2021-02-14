@@ -3,7 +3,6 @@ from asyncio import sleep
 import traceback
 import logging
 
-prev_combo_pattern = b"\xF3\x0F......\xF3\x0F...\xE8....\x48\x8B.\x48\x8B.\x0F\xB7"
 
 class AutoComboBase(PluginBase):
     log_combo_action_id = False
@@ -12,13 +11,7 @@ class AutoComboBase(PluginBase):
         return self.FPT.api.FFxivMemory.actorTable[0]
 
     def plugin_onload(self):
-        mh=self.FPT.api.MemoryHandler
-        combo_addr = mh.scan_pointer_by_pattern(prev_combo_pattern, 8)
-        self.comboState = mh.get_memory_lazy_class({
-            'duration': ('float', 0),
-            'actionId': ('uint', 4),
-        }, 0.01)(mh, combo_addr)
-        self.FPT.register_api('ComboState', self.comboState)
+        self.comboState = self.FPT.api.FFxivMemory.combatData.comboState
         self.work = False
         self.keyTemp = {i: {j: None for j in range(12)} for i in range(10)}
         self.prev_combo_action_id = None
@@ -44,7 +37,7 @@ class AutoComboBase(PluginBase):
             if self.log_combo_action_id and self.comboState.actionId != self.prev_combo_action_id:
                 self.prev_combo_action_id = self.comboState.actionId
                 self.FPT.log('new combo action %s' % self.prev_combo_action_id, logging.DEBUG)
-            if player_info.job in self.combos:
+            if player_info.job in self.combos and self.get_me() is not None:
                 try:
                     self.combos[player_info.job](self)
                 except:

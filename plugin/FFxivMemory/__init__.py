@@ -2,6 +2,7 @@ from .MemoryHandler import MemoryHandler
 from .ChatLogProcess import ChatLogProcess
 from .ActorTable import ActorTable
 from .PlayerInfo import PlayerInfo
+from .CombatData import get_combat_data
 from FFxivPythonTrigger import PluginBase
 import asyncio
 
@@ -14,17 +15,17 @@ class FFxivMemory(PluginBase):
         self.chatLogProcess = ChatLogProcess(self.handler)
         self.actorTable = ActorTable(self.handler)
         self.playerInfo = PlayerInfo(self.handler)
+        self.combatData = get_combat_data(self.handler)
         self.work = False
 
-        #self.FPT.register_event("log_event", print)
+        # self.FPT.register_event("log_event", print)
         class TmpClass(object):
             actorTable = self.actorTable
             playerInfo = self.playerInfo
+            combatData = self.combatData
 
         self.FPT.register_api('MemoryHandler', self.handler)
         self.FPT.register_api('FFxivMemory', TmpClass())
-
-
 
     def plugin_onunload(self):
         self.work = False

@@ -1,7 +1,10 @@
-from . import Warrior
+from . import Warrior, Machinist
 
 
-class AutoCombat(Warrior.Warrior):
+class AutoCombat(
+    Warrior.Warrior,
+    Machinist.Machinist
+):
     name = "auto combat"
     combat_strategy = {
         # 19: PaladinGauge,  # 骑士,PLD
@@ -15,7 +18,7 @@ class AutoCombat(Warrior.Warrior):
         # 27: SummonerGauge,  # 召唤师,SMN
         # 28: ScholarGauge,  # 学者,SCH
         # 30: NinjaGauge,  # 忍者,NIN
-        # 31: MachinistGauge,  # 机工士,MCH
+        31: Machinist.Machinist.machinist_logic,  # 机工士,MCH
         # 32: DarkKnight.DarkKnight.dark_knight_logic,  # 暗黑骑士,DRK
         # 33: AstrologianGauge,  # 占星术士,AST
         # 34: SamuraiGauge,  # 武士,SAM

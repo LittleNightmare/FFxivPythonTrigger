@@ -84,8 +84,7 @@ class MemoryHandler(pymem.Pymem):
     def write_sbyte(self, address: int, value: int):
         return self.write_byte(address, sbyte_to_byte(value))
 
-    get_memory_array = MemoryParseObject.get_memory_array
-    get_memory_lazy_array = MemoryParseObject.get_memory_lazy_array
-    get_memory_class = MemoryParseObject.get_memory_class
-    get_memory_lazy_class = MemoryParseObject.get_memory_lazy_class
-
+    get_memory_array = staticmethod(MemoryParseObject.get_memory_array)
+    get_memory_lazy_array = staticmethod(MemoryParseObject.get_memory_lazy_array)
+    get_memory_class = staticmethod(MemoryParseObject.get_memory_class)
+    get_memory_lazy_class = staticmethod(MemoryParseObject.get_memory_lazy_class)
