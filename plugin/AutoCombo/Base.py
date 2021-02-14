@@ -1,15 +1,9 @@
 from FFxivPythonTrigger import PluginBase
-from plugin.FFxivMemory.models.MemoryParseObject import get_memory_lazy_class
 from asyncio import sleep
 import traceback
 import logging
 
 prev_combo_pattern = b"\xF3\x0F......\xF3\x0F...\xE8....\x48\x8B.\x48\x8B.\x0F\xB7"
-ComboState = get_memory_lazy_class({
-    'duration': ('float', 0),
-    'actionId': ('uint', 4),
-}, 0.01)
-
 
 class AutoComboBase(PluginBase):
     log_combo_action_id = False
@@ -18,8 +12,12 @@ class AutoComboBase(PluginBase):
         return self.FPT.api.FFxivMemory.actorTable[0]
 
     def plugin_onload(self):
-        combo_addr = self.FPT.api.MemoryHandler.scan_pointer_by_pattern(prev_combo_pattern, 8)
-        self.comboState = ComboState(self.FPT.api.MemoryHandler, combo_addr)
+        mh=self.FPT.api.MemoryHandler
+        combo_addr = mh.scan_pointer_by_pattern(prev_combo_pattern, 8)
+        self.comboState = mh.get_memory_lazy_class({
+            'duration': ('float', 0),
+            'actionId': ('uint', 4),
+        }, 0.01)(mh, combo_addr)
         self.FPT.register_api('ComboState', self.comboState)
         self.work = False
         self.keyTemp = {i: {j: None for j in range(12)} for i in range(10)}

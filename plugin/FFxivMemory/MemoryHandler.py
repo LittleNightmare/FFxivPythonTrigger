@@ -2,6 +2,7 @@ import logging
 import pymem
 import struct
 from .ValToBytes import long_to_bytes
+from .models import MemoryParseObject
 
 pymem.logger.setLevel(logging.ERROR)
 
@@ -82,3 +83,9 @@ class MemoryHandler(pymem.Pymem):
 
     def write_sbyte(self, address: int, value: int):
         return self.write_byte(address, sbyte_to_byte(value))
+
+    get_memory_array = MemoryParseObject.get_memory_array
+    get_memory_lazy_array = MemoryParseObject.get_memory_lazy_array
+    get_memory_class = MemoryParseObject.get_memory_class
+    get_memory_lazy_class = MemoryParseObject.get_memory_lazy_class
+

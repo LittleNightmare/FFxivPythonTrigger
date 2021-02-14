@@ -1,4 +1,4 @@
-from plugin.FFxivMemory.MemoryHandler import MemoryHandler
+#from ..MemoryHandler import MemoryHandler
 from time import time
 
 auto_update_sec = 0.5
@@ -8,7 +8,7 @@ class Base(object):
     vals = dict()
     auto_update_sec = auto_update_sec
 
-    def __init__(self, handler: MemoryHandler, base: int):
+    def __init__(self, handler, base: int):
         self.handler = handler
         self.base = base
         self.cache = dict()
@@ -60,7 +60,7 @@ class Base(object):
 
 
 class MemoryObject(Base):
-    def __init__(self, handler: MemoryHandler, base: int):
+    def __init__(self, handler, base: int):
         super(MemoryObject, self).__init__(handler, base)
         for key in self.vals:
             self.refresh(key)
@@ -95,7 +95,7 @@ class MemoryArrayLazy(object):
     ValLen = 0
     auto_update_sec = auto_update_sec
 
-    def __init__(self, handler: MemoryHandler, base: int):
+    def __init__(self, handler, base: int):
         self.handler = handler
         self.base = base
         self.cache = dict()
@@ -157,7 +157,7 @@ class MemoryArrayLazy(object):
 
 
 class MemoryArray(MemoryArrayLazy):
-    def __init__(self, handler: MemoryHandler, base: int):
+    def __init__(self, handler, base: int):
         super(MemoryArray, self).__init__(handler, base)
         for i in range(self.Length): self.refresh(i)
 
@@ -166,7 +166,7 @@ class Pointer(object):
     auto_update_sec = auto_update_sec
     ValType = None
 
-    def __init__(self, handler: MemoryHandler, base: int):
+    def __init__(self, handler, base: int):
         self.handler = handler
         self.base = base
         self._value = None

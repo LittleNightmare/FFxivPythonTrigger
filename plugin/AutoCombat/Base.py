@@ -1,9 +1,14 @@
 from FFxivPythonTrigger import PluginBase
-from .Defines import AutoCombatData
 from asyncio import sleep
 import traceback
 
 command = "@aCombat"
+
+PlayerGCDTime_offset = 0x1CB96E8
+PlayerTargetModel_offset = 0x1D05160
+SkillQueueMark1_offset = 0x1cb9138
+IsInFight_offset = 0x1D5553A
+CoolDownGroup_offset = 0x1CB9258
 
 
 class AutoCombatBase(PluginBase):
@@ -12,7 +17,24 @@ class AutoCombatBase(PluginBase):
 
     def plugin_onload(self):
         self.work = False
-        self.autoCombatData = AutoCombatData(self.FPT.api.MemoryHandler, self.FPT.api.MemoryHandler.process_base.lpBaseOfDll)
+        mh = self.FPT.api.MemoryHandler
+        self.autoCombatData = mh.get_memory_lazy_class({
+            'playerGcdTime': ('float', PlayerGCDTime_offset),
+            'playerGcdTotal': ('float', PlayerGCDTime_offset + 4),
+            'playerTargetPtr': ('ulonglong', PlayerTargetModel_offset),
+            'skillQueueMark1': ('ulong', SkillQueueMark1_offset),
+            'skillQueueMark2': ('ulong', SkillQueueMark1_offset + 4),
+            'skillQueueAbilityId': ('ulong', SkillQueueMark1_offset + 8),
+            'skillQueueTargetId': ('ulong', SkillQueueMark1_offset + 16),
+            'isInFight': ('byte', IsInFight_offset),
+            'coolDownGroups': (mh.get_memory_lazy_array(mh.get_memory_class({
+                'currentCooldown': ('float', 8),
+                'maxCooldown': ('float', 12),
+            }), 0x14, 100), CoolDownGroup_offset),
+        }, 0.01)(
+            self.FPT.api.MemoryHandler,
+            self.FPT.api.MemoryHandler.process_base.lpBaseOfDll
+        )
         self.use = False
         self.single = True
         self.FPT.api.command.register(command, self.process_command)
