@@ -5,6 +5,7 @@ from plugin.CutsceneSkipper import CutsceneSkipper
 from plugin.SuperJump import SuperJump
 from plugin.Command import Command
 from plugin.Zoom import ZoomPlugin
+from plugin.Teleporter import Teleporter
 from plugin.NamazuServer import NamazuServer
 from plugin.AutoCombo import AutoCombo
 from plugin.AutoCombat import AutoCombat
@@ -24,6 +25,7 @@ fpt = FFxivPythonTrigger([
     CutsceneSkipper,
     SuperJump,
     ZoomPlugin,
+    Teleporter,
     AutoCombo,
     AutoCombat
 ])

@@ -1,6 +1,11 @@
 from os import path
 import clr
-clr.AddReference(path.join(path.dirname(path.realpath(__file__)),'res', 'GayMagician'))
+import sys
+if getattr(sys, 'frozen', False):
+    res = path.join('res', 'GayMagician')
+else:
+    res = path.join(path.dirname(path.realpath(__file__)),'res', 'GayMagician')
+clr.AddReference(res)
 from GayMagician import GayMagician
 
 class Magics(object):
