@@ -50,4 +50,4 @@ class ModuleStorage(object):
         if self.data:
             self._path.mkdir(exist_ok=True, parents=True)
             with open(self._path / 'data', 'w+') as fo:
-                fo.write(json.dumps(self.data, indent=4, sort_keys=True))
+                fo.write(json.dumps(self.data, indent=4))

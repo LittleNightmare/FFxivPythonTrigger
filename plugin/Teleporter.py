@@ -1,5 +1,6 @@
 from FFxivPythonTrigger import PluginBase
 import math
+import traceback
 
 command = "@tp"
 pattern_main = b"\xF3\x0F......\xEB.\x48\x8B.....\xE8....\x48\x85"
@@ -44,16 +45,53 @@ class Teleporter(PluginBase):
     def tp_rz(self, dis):
         self.tp(z=self.coor_main.z + dis)
 
+    def get_zone_data(self):
+        zid = self.FPT.api.FFxivMemory.zone.id
+        data = self.FPT.storage.data.setdefault(zid, dict())
+        return zid, data
+
     def _process_command(self, args):
         a1 = args[0].lower()
         if a1 == "set":
             return self.tp(float(args[1]), float(args[2]), float(args[3]))
         elif a1 == "get":
             return "%.2f %.2f %.2f" % (self.coor_main.x, self.coor_main.y, self.coor_main.z)
+        elif a1 == "list":
+            zid, data = self.get_zone_data()
+            return "%s (%s): %s" % (zid,len(data),'/'.join(data.keys()))
+        elif a1 == "save":
+            zid, data = self.get_zone_data()
+            if args[1] in data:
+                return "key [%s] is already in zone [%s]"%(args[1],zid)
+            data[args[1]] =[self.coor_main.x, self.coor_main.y, self.coor_main.z]
+            self.FPT.storage.store()
+            return "%s (%s): %s" % (zid,len(data),'/'.join(data.keys()))
+        elif a1 == "goto":
+            zid, data = self.get_zone_data()
+            if args[1] not in data:
+                return "key [%s] is not in zone [%s]" % (zid, args[1])
+            dis=math.sqrt((data[args[1]][0]-self.coor_main.x)**2+(data[args[1]][1]-self.coor_main.y)**2)
+            if dis>=15:
+                return "target point is %.2f meters far, teleport to target is a dangerous operation,please use 'force-goto'"
+            self.tp(*data[args[1]])
+            return "success"
+        elif a1 == "force-goto":
+            zid, data = self.get_zone_data()
+            if args[1] not in data:
+                return "key [%s] is not in zone [%s]" % (zid, args[1])
+            self.tp(*data[args[1]])
+            return "success"
+        elif a1 == "drop":
+            zid, data = self.get_zone_data()
+            if args[1] not in data:
+                return "key [%s] is not in zone [%s]" % (zid, args[1])
+            del data[args[1]]
+            self.FPT.storage.store()
+            return "success"
         dis = float(args[1])
         if a1 in ["north", "n"]:
             self.tp_rxy(math.pi, dis)
-            return "tp to north %s"%dis
+            return "tp to north %s" % dis
         elif a1 in ["east", "e"]:
             self.tp_rxy(math.pi / 2, dis)
             return "tp to east %s" % dis
@@ -82,7 +120,7 @@ class Teleporter(PluginBase):
             self.tp_rz(-dis)
             return "tp to down %s" % dis
         else:
-            return "unknown direction: [%s]"%a1
+            return "unknown direction: [%s]" % a1
 
     def process_command(self, args):
         try:

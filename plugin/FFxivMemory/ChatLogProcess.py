@@ -1,4 +1,3 @@
-from .ChatLogMemory import ChatLogMemory
 from FFxivPythonTrigger import EventBase
 from datetime import datetime
 
@@ -18,8 +17,8 @@ class ChatLogEvent(EventBase):
 
 
 class ChatLogProcess(object):
-    def __init__(self, memoryHandler):
-        self.chatLogMemory = ChatLogMemory(memoryHandler)
+    def __init__(self, chatLogMemory):
+        self.chatLogMemory = chatLogMemory
         self.update_sign = self.chatLogMemory.get_update_sign()
         self.msg_count = self.chatLogMemory.count()
 
