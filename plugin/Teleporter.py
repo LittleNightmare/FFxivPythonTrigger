@@ -47,7 +47,7 @@ class Teleporter(PluginBase):
 
     def get_zone_data(self):
         zid = self.FPT.api.FFxivMemory.zone.id
-        data = self.FPT.storage.data.setdefault(zid, dict())
+        data = self.FPT.storage.data.setdefault(str(zid), dict())
         return zid, data
 
     def _process_command(self, args):
@@ -69,10 +69,10 @@ class Teleporter(PluginBase):
         elif a1 == "goto":
             zid, data = self.get_zone_data()
             if args[1] not in data:
-                return "key [%s] is not in zone [%s]" % (zid, args[1])
+                return "key [%s] is not in zone [%s]" % (args[1],zid)
             dis=math.sqrt((data[args[1]][0]-self.coor_main.x)**2+(data[args[1]][1]-self.coor_main.y)**2)
             if dis>=15:
-                return "target point is %.2f meters far, teleport to target is a dangerous operation,please use 'force-goto'"
+                return "target point is %.2f meters far, teleport to target is a dangerous operation,please use 'force-goto'"%dis
             self.tp(*data[args[1]])
             return "success"
         elif a1 == "force-goto":
