@@ -94,6 +94,7 @@ class WebChat(PluginBase):
     async def plugin_start(self):
         host = self.server_config.setdefault('host', default_host)
         port = self.server_config.setdefault('port', default_port)
+        self.FPT.log('start WebChat at %s:%s'%(host,port))
         await web.TCPSite(self.runner, host, port).start()
 
     async def deal_chat_log(self, event):
