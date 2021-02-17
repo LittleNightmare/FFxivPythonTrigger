@@ -2,7 +2,7 @@ from os import path
 import clr
 import sys
 if getattr(sys, 'frozen', False):
-    res = path.join('res', 'GayMagician')
+    res = path.join('res','GayMagician','GayMagician')
 else:
     res = path.join(path.dirname(path.realpath(__file__)),'res', 'GayMagician')
 clr.AddReference(res)
