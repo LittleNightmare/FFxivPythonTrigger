@@ -1,5 +1,6 @@
 from FFxivPythonTrigger import EventBase
 from datetime import datetime
+import calendar
 
 
 class ChatLogEvent(EventBase):
@@ -14,6 +15,14 @@ class ChatLogEvent(EventBase):
 
     def __str__(self):
         return "{}\t{}\t{}\t{}".format(self.time, self.channel_id, self.player or 'n/a', self.message)
+
+    def get_dict(self):
+        return {
+            't':calendar.timegm(self.time.timetuple()),
+            'c': self.channel_id,
+            's': self.player,
+            'm':self.message
+        }
 
 
 class ChatLogProcess(object):
